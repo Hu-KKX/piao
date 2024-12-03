@@ -10,9 +10,13 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView
-    },    
+    },
     {
       path: '/',
+      redirect: '/index',//重定向到首页
+    },
+    {
+      path: '/index',
       name: 'index',
       component: IndexView
     },
@@ -56,6 +60,11 @@ const router = createRouter({
       name: 'game',
       component: () => import('@/views/index/GameView.vue')
     },
+    {
+      path: '/more',
+      name: 'more',
+      component: () => import('@/views/index/MoreView.vue')
+    }
     ]
 })
 

@@ -1,41 +1,61 @@
-<template>
-    <el-text class="title-text" size="200px">重磅热播</el-text>
-    <div class="grid-container">
-        <div class="grid-item" v-for="i in 20" :key="i">{{ i }}</div>
-    </div>
-</template>
-
-<script setup>
-
+<script setup lang="ts">
+import Card from '@/components/others/Card.vue';
+import 'element-plus/theme-chalk/display.css'
 </script>
 
+<template>
+    <div class="video-list">
+    <el-text class="title-text" size="200px">重磅热播</el-text>
+    <el-row :gutter="16" >
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col class="sm hidden-sm-and-down" :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col class="sm hidden-sm-and-down" :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col class="lg hidden-md-and-down" :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+      <el-col class="lg hidden-md-and-down" :xs="24" :sm="12" :md="8" :lg="6" :xl="6">
+        <Card></Card>
+      </el-col>
+    </el-row>
+</div>
+  </template>
+  
 <style scoped>
+.video-list {
+    height: 100%;
+}
+.el-row {
+    height: 100%;
+}
+.el-col {
+    border-radius: 4px;
+    padding-top: 10px;
+  }
+
+.grid-content {
+background-color:black;
+min-height: 100%;
+}
+
+
 .title-text {
     font-size: 32px; /* 根据需要调整字形大小 */
     font-weight: bold; /* 设置字形为加粗 */
     color: #303133;
 }
-
-.grid-container {
-    display: grid;
-    padding-top: 20px;
-    grid-template-columns: repeat(5, 1fr);
-    /* 横向4个 */
-    grid-template-rows: repeat(5, 1fr);
-    /* 纵向5个 */
-    gap: 10px;
-    /* 格子之间的间距 */
-    /* height: 500px;  */
-}
-
-.grid-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    background-color: lightblue;
-    /* 格子的背景色 */
-    border-radius: 5px ;
-    /* 格子的边框 */
-}
-</style>
+  </style>
