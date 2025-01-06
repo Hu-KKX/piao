@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div id="login_box">
-      <h2>REGISTER</h2>
+      <h2>注  册</h2>
   <el-form
     ref="registerForm"
     :model="form"
@@ -30,6 +30,9 @@
       <el-button type="primary" :plain="true" @click="submitForm">注册</el-button>
     </el-form-item>
   </el-form>
+  <div class="login-prompt">
+                已有账号？<router-link to="/login" class="login-link">点我！</router-link>
+  </div>
 </div>
 </div>
 </template>
@@ -94,7 +97,7 @@ const submitForm = async () => {
         message: '手机号或邮箱已被注册！',
         type: 'warning',
       });
-      router.push('/login'); // 跳转到登录页面
+
     }
   } catch (error) {
     console.log(error); // 输出错误
@@ -146,8 +149,9 @@ const submitForm = async () => {
 }
 
 ::v-deep .el-form-item__label {
-  
   color: white;
+  font-size: 17px; /* 字体大小 */
+  font-weight: bold; /* 加粗 */
 }
 
 .el-input__inner {
@@ -167,7 +171,17 @@ const submitForm = async () => {
 h2 {
     color: #ffffff90;
     margin-top: 20px;
+    margin-bottom: 20px;
+}
+.login-prompt {
+    margin-top: 20px; /* 添加一些上外边距 */
+    color: #ffffff; /* 文本颜色 */
 }
 
+.login-link {
+    color: #30cfd0; /* 链接颜色 */
+    text-decoration: underline; /* 下划线 */
+    cursor: pointer; /* 鼠标样式 */
+}
 
 </style>

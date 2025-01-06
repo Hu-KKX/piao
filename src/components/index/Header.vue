@@ -31,16 +31,17 @@
     <el-menu-item index="1">收藏</el-menu-item>
     <el-menu-item index="2">消息</el-menu-item>
     <el-sub-menu index="3">
-      <template #title>个人</template>
-      <el-menu-item index="2-1">item one</el-menu-item>
-      <el-menu-item index="2-2">item two</el-menu-item>
-      <el-menu-item index="2-3">item three</el-menu-item>
-      <el-sub-menu index="2-4">
-        <template #title>item four</template>
-        <el-menu-item index="2-4-1">item one</el-menu-item>
-        <el-menu-item index="2-4-2">item two</el-menu-item>
-        <el-menu-item index="2-4-3">item three</el-menu-item>
-      </el-sub-menu>
+      <template #title>
+        <el-avatar
+                size="24"
+                src="/src/assets/img/avatar.png" 
+                alt="头像"
+              />
+      </template>
+      <el-menu-item index="2-1">个人中心</el-menu-item>
+      <el-menu-item index="2-2">我的收藏</el-menu-item>
+      <el-menu-item index="2-3">我的加追</el-menu-item>
+      <el-menu-item index="2-4">退出登录</el-menu-item>
     </el-sub-menu>
   </el-menu></el-col>
   </el-row>

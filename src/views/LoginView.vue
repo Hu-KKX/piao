@@ -1,82 +1,125 @@
 <template>
     <div class="wrapper">
         <div id="login_box">
-            <h2>LOGIN</h2>
-        <el-form
-        ref="LoginForm"
-        :model="form"
-        label-width="120px"
-        label-position="left"
-        :rules="rules"
-        class="login-form"
-        >
-        <el-form-item label="用户名" prop="username" class="label-color">
-            <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password" class="label-color">
-            <el-input v-model="form.password" type="password" placeholder="请输入密码" class="login-input"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="submitLogin" :plain="true" class="login-button">登录</el-button>
-        </el-form-item>
-        </el-form>
+            <h2>登  录</h2>
+            <el-radio-group v-model="loginType" class="login-type-switch">
+                <el-radio-button label="phone">手机号</el-radio-button>
+                <el-radio-button label="email">邮箱</el-radio-button>
+            </el-radio-group>
+            <el-form
+                ref="LoginForm"
+                :model="form"
+                label-width="120px"
+                label-position="left"
+                :rules="rules"
+                class="login-form"
+            >
+                <el-form-item v-if="loginType === 'phone'" label="手机号" prop="phoneNumber" class="label-color">
+                    <el-input v-model="form.phoneNumber" placeholder="请输入手机号"></el-input>
+                </el-form-item>
+                <el-form-item v-if="loginType === 'email'" label="邮箱" prop="email" class="label-color">
+                    <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="password" class="label-color">
+                    <el-input v-model="form.password" type="password" placeholder="请输入密码" class="login-input"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitLogin" :plain="true" class="login-button">登录</el-button>
+                </el-form-item>
+                
+            </el-form>
+            <div class="register-prompt">
+                还未注册？<router-link to="/register" class="register-link">点我！</router-link>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref,reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
+const loginType = ref('phone'); // 默认登录方式为手机号
+
 const form = reactive({
-    username: '',
+    loginType: loginType.value,
+    phoneNumber: '',
+    email: '',
     password: ''
 });
 
+// 使用ref获取表单的引用
+const LoginForm = ref(null); // 创建LoginForm的引用
+
+
 // 定义表单验证规则
 const rules = reactive({
-  username: [
-    { required: true, message: '用户名不可为空', trigger: 'blur' },
-  ],
-  phoneNumber: [
-    { required: true, message: '请输入手机号', trigger: 'blur' },
-    { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' },
-  ],
-  email: [
-    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    {
-      pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      message: '邮箱格式不正确',
-      trigger: 'blur',
-    },
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-  ],
+    phoneNumber: [
+        { required: true, message: '请输入手机号', trigger: 'blur' },
+        { 
+          pattern: /^1[3-9]\d{9}$/, 
+          message: '手机号格式不正确',
+          trigger: 'blur' 
+        },
+    ],
+    email: [
+        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+        {
+            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            message: '邮箱格式不正确',
+            trigger: 'blur',
+        },
+    ],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+    ],
 });
 
+// 监测登录方式切换
+watch(loginType, (newType) => {
+    // 只要切换登录方式，将输入框重置
+    form.phoneNumber = '';
+    form.email = '';
+    form.loginType = newType; //更新form中的loginType
+});
 
+// 表单提交
 const submitLogin = async () => {
+    console.log('submitLogin 被调用');
     try {
-        await registerForm.value.validate(); // 验证表单输入
 
-        const response = await axios.post('/api/login', form.value);
-        if (response.data.success) {
+        await LoginForm.value.validate(); // 验证表单输入
+        console.log('表单验证成功');
+        const loginData = {
+            loginType: loginType.value,
+            password: form.password,
+            ...(loginType.value === 'phone' ? { phoneNumber: form.phoneNumber } : { email: form.email })
+        };
+        console.log('表单数据:', loginData); 
+
+        const response = await axios.post('/api/users/login', loginData);
+        console.log('响应数据:', response.data); // 在请求后确认输出响应数据
+        if (response.data.status === 200) {
             ElMessage.success('登录成功！');
             // 登录成功后可以进行页面跳转，比如去首页
             // this.$router.push('/home');
-        } else {
-            ElMessage.error(response.data.message || '登录失败！');
+        } 
+        else if (response.data.status === 1005) {
+            ElMessage.warning('用户名或密码错误！');
+        }
+        else {
+            const errorMessage = response.data.message || '登录失败，未知错误！';
+            ElMessage.error(errorMessage);
         }
     } catch (error) {
-        ElMessage.error('登录请求出错！');
+        console.error('登录请求出错:', error);
+        // ElMessage.error('登录请求出错！');
     }
 };
 </script>
 
 <style scoped>
-
 .wrapper {
     display: flex;
     justify-content: center;
@@ -114,8 +157,9 @@ const submitLogin = async () => {
 }
 
 ::v-deep .el-form-item__label {
-  
-  color: white;
+    color: white;
+    font-size: 17px; /* 字体大小 */
+    font-weight: bold; /* 加粗 */
 }
 
 .el-input__inner {
@@ -135,5 +179,21 @@ const submitLogin = async () => {
 h2 {
     color: #ffffff90;
     margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.login-type-switch {
+    margin-bottom: 20px;
+}
+
+.register-prompt {
+    margin-top: 20px; /* 添加一些上外边距 */
+    color: #ffffff; /* 文本颜色 */
+}
+
+.register-link {
+    color: #30cfd0; /* 链接颜色 */
+    text-decoration: underline; /* 下划线 */
+    cursor: pointer; /* 鼠标样式 */
 }
 </style>
